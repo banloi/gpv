@@ -30,5 +30,15 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "standard": {
+      "ignore": [
+        "node_modules"
+      ],
+      "globals": [
+        "test",
+        "expect",
+        "fetch"
+      ]
   }
 }
