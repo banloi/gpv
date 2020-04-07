@@ -5,6 +5,8 @@ import Register from './Regsiter'
 import Error from './Error'
 import Activities from './Activities'
 import User from './User'
+import UserManager from './UserManager'
+import ActManager from './ActManager'
 
 export {
   App,
@@ -13,5 +15,7 @@ export {
   Register,
   Error,
   Activities,
-  User
+  User,
+  UserManager,
+  ActManager
 }

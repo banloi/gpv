@@ -9,7 +9,7 @@ import {
 } from 'react-router-dom'
 // import axios from 'axios'
 // axios.defaults.withCredentials = true
-import { Login, Main, Register } from '../index'
+import { Login, Main, Register, UserManager, ActManager } from '../index'
 import history from '../history'
 
 class App extends Component {
@@ -26,6 +26,12 @@ class App extends Component {
             </Route>
             <Route path='/u'>
               <Main />
+            </Route>
+            <Route path='/a/user'>
+              <UserManager />
+            </Route>
+            <Route path='/a/act'>
+              <ActManager />
             </Route>
           </Switch>
         </Router>
