@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 // import './index.css'
 import axios from 'axios'
 // axios.defaults.withCredentials = true
-import { Error } from '../index'
+// import { Error } from '../index'
 import qs from 'qs'
 import history from '../history'
 import config from '../config'
@@ -145,9 +145,10 @@ class Register extends Component {
   }
 
   render () {
-    const { checkNum, checkPas, checkRepas, same, success } = this.state
+    // const { checkNum, checkPas, checkRepas, same, success } = this.state
+    const { same } = this.state
     const { number, password, rePassword, telephone } = this.state
-    const { location } = this.props
+    // const { location } = this.props
     return (
       <div className='register'>
         <form onSubmit={this.handleRegisterSubmit}>
