@@ -1,0 +1,9 @@
+.activity {
+  margin: 10px 50px;
+  padding: 5px;
+  border: 1px solid gray;
+}
+
+.name {
+  font-size: large;
+}
