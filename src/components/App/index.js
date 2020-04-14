@@ -33,6 +33,7 @@ class App extends Component {
             <Route path='/a/act'>
               <ActManager />
             </Route>
+            <Route><div>不存在该页面</div></Route>
           </Switch>
         </Router>
       </div>
