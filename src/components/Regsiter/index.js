@@ -110,10 +110,14 @@ class Register extends Component {
     ))
       .then(res => {
         if (res.status === 201) {
-          this.state.success = true
+          this.setState({
+            success: true
+          })
         }
         history.push('/')
-        this.state.locationChange = true
+        this.setState({
+          locationChange: true
+        })
         console.log(history.location)
         console.log(res)
       })
