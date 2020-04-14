@@ -76,7 +76,7 @@ class User extends Component {
     }
     if (studentInfo) {
       console.log('ojbk')
-      score.map(item => {
+      score.forEach(item => {
         const module = item.activityInfo.module
         const score = item.score
         switch (module) {
@@ -96,6 +96,7 @@ class User extends Component {
             moduleScore.D += score
             moduleScore.all += score
             break
+          default: break
         }
       })
       return (
@@ -190,7 +191,8 @@ class Activity extends Component {
         })
     } else if (this.state.state === '已报名') {
       axios.post(`${config.baseURL}/enrollment/cancel`, qs.stringify({
-        _id: this.state.enrollId
+        _id: this.state.enrollId,
+        activityId: this.state.id
       }))
         .then(res => {
           console.log(res)
@@ -206,7 +208,7 @@ class Activity extends Component {
   }
 
   render () {
-    const { _id, name, startTime, endTime, location, limiteOfStu, module, detail } = this.props.item.activityInfo
+    const { _id, name, startTime, endTime, location, limiteOfStu, enroNum, module, detail } = this.props.item.activityInfo
     const enrollId = this.props.item._id // 此为报名表 id， 上面的 _id 为活动 id
     const { id, state } = this.state
     if (id !== _id) {
@@ -228,14 +230,16 @@ class Activity extends Component {
             地点：{location}
           </div>
           <div>
-            人数限制:{limiteOfStu}
+            人数限制: {enroNum} / {limiteOfStu}
           </div>
           <div className='module'>
-            模块:{module}
+            模块: {module}
           </div>
-          <div className='detail'>
-            详情:{detail}
-          </div>
+          <details className='detail'>
+            <summary>查看详情</summary>
+            <p>{detail}
+            </p>
+          </details>
           <button onClick={this.handleEnroll}>{state}</button>
         </div>
       </div>
