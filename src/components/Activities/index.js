@@ -57,7 +57,8 @@ class Activity extends Component {
         })
     } else if (this.state.state === '已报名') {
       axios.post(`${config.baseURL}/enrollment/cancel`, qs.stringify({
-        _id: this.state.enrollId
+        _id: this.state.enrollId,
+        activityId: this.state.id
       }))
         .then(res => {
           console.log(res)
@@ -73,7 +74,7 @@ class Activity extends Component {
   }
 
   render () {
-    const { _id, name, startTime, endTime, location, limiteOfStu, module, detail } = this.props.item
+    const { _id, name, startTime, endTime, location, limiteOfStu, enroNum, module, detail, enroDeadLine } = this.props.item
     const { id, state } = this.state
     if (id !== _id) {
       this.setState({
@@ -93,15 +94,19 @@ class Activity extends Component {
             地点：{location}
           </div>
           <div>
-            人数限制:{limiteOfStu}
+            人数限制: {enroNum} / {limiteOfStu}
           </div>
           <div className='module'>
-            模块:{module}
+            模块: {module}
           </div>
-          <div className='detail'>
-            详情:{detail}
+          <div>
+            报名截止：{enroDeadLine}  <button onClick={this.handleEnroll}>{state}</button>
           </div>
-          <button onClick={this.handleEnroll}>{state}</button>
+          <details className='detail'>
+            <summary>查看详情</summary>
+            <p>{detail}
+            </p>
+          </details>
         </div>
       </div>
     )
