@@ -3,7 +3,7 @@ import './index.css'
 import axios from 'axios'
 // import history from '../history'
 // import { Route, Router, Link, Switch } from 'react-router-dom'
-import config from '../config'
+import config from '../../config'
 import qs from 'qs'
 
 class User extends Component {

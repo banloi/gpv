@@ -1,12 +1,10 @@
 import App from './App'
 import Login from './Login'
-import Main from './Main'
+import { Main } from './UserPage'
 import Register from './Regsiter'
 import Error from './Error'
-import Activities from './Activities'
-import User from './User'
 import UserManager from './UserManager'
-import ActManager from './ActManager'
+import { ActManager } from './ActManager'
 
 export {
   App,
@@ -14,8 +12,6 @@ export {
   Main,
   Register,
   Error,
-  Activities,
-  User,
   UserManager,
   ActManager
 }

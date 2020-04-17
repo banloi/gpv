@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Route, Router, Link, Switch } from 'react-router-dom'
 import { Activities, User } from '../index'
-import history from '../history'
+import history from '../../history'
 import './index.css'
 
 class Main extends Component {

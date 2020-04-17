@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import axios from 'axios'
 import './index.css'
-import config from '../config'
+import config from '../../config'
 import qs from 'qs'
-import history from '../history'
+import history from '../../history'
 
 /* class Activity extends Component {
   constructor (props) {
