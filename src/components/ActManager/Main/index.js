@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import './index.css'
 import history from '../../history'
 import { Route, Router, Link, Switch } from 'react-router-dom'
-import { CreateAct, Enrolling, Underway, UnRated } from '../index'
+import { CreateAct, Enrolling, Underway, UnRated, Done } from '../index'
 
 class ActManager extends Component {
   render () {
@@ -42,7 +42,7 @@ class ActManager extends Component {
             <UnRated />
           </Route>
           <Route path='/a/act/complete'>
-            <div>已完成</div>
+            <Done />
           </Route>
         </Switch>
       </Router>

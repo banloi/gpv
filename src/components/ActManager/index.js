@@ -8,6 +8,7 @@ import Underway from './Underway'
 import ActManager from './Main'
 import UnRated from './UnRated'
 import RateTable from './RateTable'
+import Done from './Done'
 
 export {
   Activity,
@@ -19,5 +20,6 @@ export {
   Underway,
   ActManager,
   UnRated,
-  RateTable
+  RateTable,
+  Done
 }

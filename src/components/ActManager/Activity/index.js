@@ -60,7 +60,6 @@ class Activity extends Component {
           <summary>名单</summary>
           {Component ? <Component activityId={_id} /> : <div>nidaye</div>}
         </details>
-        {Component ? <Component activityId={_id} /> : <div>nidaye</div>}
       </div>
     )
   }
