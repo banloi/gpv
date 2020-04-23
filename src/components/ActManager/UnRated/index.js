@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
-import './index.css'
-import axios from 'axios'
 import history from '../../history'
+import axios from 'axios'
 import config from '../../config'
-import { Activity, Enrollments } from '../index'
+import { Activity, RateTable } from '../index'
 
-class Enrolling extends Component {
+class UnRated extends Component {
   constructor () {
     super()
     this.state = {
@@ -15,12 +14,11 @@ class Enrolling extends Component {
   }
 
   getEnroAct () {
-    axios.get(`${config.baseURL}/activity/enrolling`)
+    axios.get(`${config.baseURL}/activity/unrated`)
       .then(res => {
         this.setState({
           list: res.data
         })
-        console.log(res)
       }).catch(err => {
         console.log(err.response)
         if (err.response && err.response.data.Error && err.response.data.Error === '请先登录') {
@@ -41,7 +39,7 @@ class Enrolling extends Component {
           <div className='activities' key={item._id}>
             <Activity
               item={item}
-              Component={Enrollments}
+              Component={RateTable}
             />
           </div>
         )
@@ -50,4 +48,4 @@ class Enrolling extends Component {
   }
 }
 
-export default Enrolling
+export default UnRated

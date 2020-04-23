@@ -6,6 +6,8 @@ import Enrolling from './Enrolling'
 import Enrollments from './Enrollments'
 import Underway from './Underway'
 import ActManager from './Main'
+import UnRated from './UnRated'
+import RateTable from './RateTable'
 
 export {
   Activity,
@@ -15,5 +17,7 @@ export {
   Enrolling,
   Enrollments,
   Underway,
-  ActManager
+  ActManager,
+  UnRated,
+  RateTable
 }

@@ -97,6 +97,7 @@ class AddEnro extends Component {
       enro: resu
     })
   }
+  // 删除报名
 
   handleSubmit (event) {
     event.preventDefault()

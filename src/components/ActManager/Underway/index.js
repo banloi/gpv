@@ -3,7 +3,7 @@ import './index.css'
 import axios from 'axios'
 import history from '../../history'
 import config from '../../config'
-import { Activity } from '../index'
+import { Activity, Enrollments } from '../index'
 
 class Underway extends Component {
   constructor () {
@@ -54,6 +54,7 @@ class Underway extends Component {
             <div className='activities' key={item._id}>
               <Activity
                 item={item}
+                Component={Enrollments}
               />
             </div>
           )
