@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
-import axios from 'axios'
 import './index.css'
-import config from '../../config'
+import { config, axios } from '../../config'
 import qs from 'qs'
 import history from '../../history'
 
@@ -34,7 +33,7 @@ class Activity extends Component {
 
   handleEnroll () {
     if (this.state.state === '报名') {
-      axios.post(`${config.baseURL}/enrollment`, qs.stringify({
+      axios.post(config.url.postEnro, qs.stringify({
         activityId: this.state.id
       }))
         .then(res => {
@@ -45,11 +44,11 @@ class Activity extends Component {
           console.log(res)
         })
         .catch(err => {
-          if (err.response.data.Error === '已报名，无需重复报名') {
-            console.log(err.response.data.enrollId)
+          if (err.Error === '已报名，无需重复报名') {
+            console.log(err.enrollId)
             this.setState({
               state: '已报名',
-              enrollId: err.response.data.enrollId
+              enrollId: err.enrollId
             })
             console.log(err.response.data)
           }
@@ -127,15 +126,15 @@ class Activities extends Component {
   }
 
   getAct () {
-    axios.get(`${config.baseURL}/activity`)
+    axios.get(config.url.getActivities)
       .then(res => {
         this.setState({
           list: res.data
         })
       })
       .catch(err => {
-        console.log(err.response)
-        if (err.response.data.Error === '请先登录') {
+        console.log(err)
+        if (err.Error === '请先登录') {
           history.push('/')
         }
       })

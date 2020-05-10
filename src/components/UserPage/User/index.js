@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import './index.css'
-import axios from 'axios'
 // import history from '../history'
 // import { Route, Router, Link, Switch } from 'react-router-dom'
-import config from '../../config'
+import { config, axios } from '../../config'
 import qs from 'qs'
 
 class User extends Component {
@@ -19,7 +18,7 @@ class User extends Component {
   }
 
   getUserInfo () {
-    axios.get('http://localhost:3000/user/activities')
+    axios.get(config.url.getUserInfo)
       .then(
         (res) => {
           this.setState({
