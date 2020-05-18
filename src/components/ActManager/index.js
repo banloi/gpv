@@ -9,6 +9,7 @@ import ActManager from './Main'
 import UnRated from './UnRated'
 import RateTable from './RateTable'
 import Done from './Done'
+import Manager from './Manager'
 
 export {
   Activity,
@@ -21,5 +22,6 @@ export {
   ActManager,
   UnRated,
   RateTable,
-  Done
+  Done,
+  Manager
 }
