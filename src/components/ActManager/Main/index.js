@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import './index.css'
 import history from '../../history'
 import { Route, Router, Link, Switch } from 'react-router-dom'
-import { CreateAct, Enrolling, Underway, UnRated, Done } from '../index'
+import { CreateAct, Enrolling, Manager, Underway, UnRated, Done } from '../index'
 
 class ActManager extends Component {
   render () {
@@ -32,6 +32,7 @@ class ActManager extends Component {
           <Route exact path='/a/act/new'>
             <CreateAct />
           </Route>
+          <Route path='/a/act/enrolling/manager/:id' component={Manager} />
           <Route path='/a/act/enrolling'>
             <Enrolling />
           </Route>
