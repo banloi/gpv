@@ -1,8 +1,11 @@
 .login-form {
-  margin: 10% auto;
-  padding: 3% 5% 2%;
-  max-width: 330px;
-  box-shadow: 0 4px 32px 0 rgba(10,14,29,.02), 0 8px 64px 0 rgba(10,14,29,.08);
+  padding: 10% 10% 8%;
+
+}
+.login-form-container {
+    margin: 10% auto;
+    max-width: 330px;
+    box-shadow: 0 4px 32px 0 rgba(10,14,29,.02), 0 8px 64px 0 rgba(10,14,29,.08);
 }
 .login-form-forgot {
   float: right;

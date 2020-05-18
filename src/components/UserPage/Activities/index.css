@@ -1,9 +1,14 @@
-.activity {
-  margin: 10px 50px;
-  padding: 5px;
-  border: 1px solid gray;
-}
-
 .name {
   font-size: large;
+}
+.item {
+  display: inline-block;
+  width: 15%;
+}
+.activity {
+  margin: 10px 0;
+  box-shadow: 0 4px 32px 0 rgba(10,14,29,.02), 0 8px 64px 0 rgba(10,14,29,.08);
+}
+.enro-btn {
+  margin-bottom: 5px;
 }

@@ -1,0 +1,7 @@
+.userInfo {
+  width: 80%;
+  margin-top: 2%;
+  padding: 5% 10%;
+  border-radius: 20px;
+  box-shadow: 0 4px 32px 0 rgba(10,14,29,.02), 0 8px 64px 0 rgba(10,14,29,.08);
+}

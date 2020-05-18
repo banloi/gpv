@@ -33,3 +33,8 @@
   -webkit-transition: 0.1s;
   transition: 0.1s;
 }
+.main-page {
+  width: 60%;
+  max-width: 640px;
+  margin: auto;
+}
