@@ -1,4 +1,5 @@
 import axios from 'axios'
+import history from './history'
 
 const baseUrl = 'http://localhost:3000'
 
@@ -10,15 +11,24 @@ const config = {
     postEnro: `${baseUrl}/enrollment`,
     cancelEnro: `${baseUrl}/enrollment/cancel`,
     getActivities: `${baseUrl}/activity`,
+    deleteActivity: `${baseUrl}/activity`,
     getUserEnrolled: `${baseUrl}/user/activities/enrolled`,
     getUserDone: `${baseUrl}/user/activities/done`,
-    getUserInfo: `${baseUrl}/user/userinfo`
+    getUserInfo: `${baseUrl}/user/userinfo`,
+    postActivity: `${baseUrl}/activity`,
+    getEnrolling: `${baseUrl}/activity/enrolling`,
+    getEnrollment: `${baseUrl}/enrollment`,
+    enrollingManager: `${baseUrl}/a/act/enrolling/manager`,
+    getActivityInfo: `${baseUrl}/activity/info`, // 获取单个活动信息
+    putActivityInfo: `${baseUrl}/activity/info`, // 更新活动信息
+    postAdmEnro: `${baseUrl}/enrollment/adm`, // 管理员添加报名表
+    deleteAdmEnro: `${baseUrl}/enrollment/cancel`
   }
 }
 
 axios.interceptors.request.use(request => {
   try {
-    var luffyJwtToken = localStorage.getItem('luffy_jwt_token')
+    var luffyJwtToken = window.localStorage.getItem('luffy_jwt_token')
     if (luffyJwtToken) {
       console.log(luffyJwtToken)
     }
@@ -34,7 +44,6 @@ axios.interceptors.request.use(request => {
 // 拦截响应，遇到token不合法则报错
 axios.interceptors.response.use(
   response => {
-    console.log(response)
     if (response.data.token) {
       console.log('token:', response.data.token)
       window.localStorage.setItem('luffy_jwt_token', response.data.token)
@@ -43,11 +52,12 @@ axios.interceptors.response.use(
   },
   error => {
     const errRes = error.response
-    if (errRes.status === 401) {
+    if (errRes.status && errRes.status === 401) {
       window.localStorage.removeItem('luffy_jwt_token')
-      console.log(error.response.data)
+      history.push('/')
       // console.log()('Auth Error!', `${errRes.data.error.message}, please login!`, 'error')
     }
+    console.log(errRes)
     return Promise.reject(error.response.data) // 返回接口返回的错误信息
   })
 
