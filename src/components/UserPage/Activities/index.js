@@ -1,124 +1,25 @@
 import React, { Component } from 'react'
 import './index.css'
 import { config, axios } from '../../config'
-import qs from 'qs'
+import { Tag } from 'antd'
 import history from '../../history'
+import Activity from '../Activity'
 
-/* class Activity extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      a: 'a'
-    }
-  }
-
-  render () {
-    const { activityList } = this.props
-    return (
-      <div>{activityList}nidate</div>
-    )
-  }
-} */
-
-class Activity extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      id: '', // 活动Id
-      state: '报名',
-      enrollId: ''
-    }
-    this.handleEnroll = this.handleEnroll.bind(this)
-  }
-
-  handleEnroll () {
-    if (this.state.state === '报名') {
-      axios.post(config.url.postEnro, qs.stringify({
-        activityId: this.state.id
-      }))
-        .then(res => {
-          this.setState({
-            state: '已报名',
-            enrollId: res.enrollId
-          })
-          console.log(res)
-        })
-        .catch(err => {
-          if (err.Error === '已报名，无需重复报名') {
-            console.log(err.enrollId)
-            this.setState({
-              state: '已报名',
-              enrollId: err.enrollId
-            })
-            console.log(err.response.data)
-          }
-          console.log(err.message)
-        })
-    } else if (this.state.state === '已报名') {
-      axios.post(`${config.baseURL}/enrollment/cancel`, qs.stringify({
-        _id: this.state.enrollId,
-        activityId: this.state.id
-      }))
-        .then(res => {
-          console.log(res)
-          this.setState({
-            state: '报名',
-            enrollId: ''
-          })
-        })
-        .catch(err => {
-          console.log(err.response)
-        })
-    }
-  }
-
-  render () {
-    const { _id, name, startTime, endTime, location, limiteOfStu, enroNum, module, detail, enroDeadLine } = this.props.item
-    const { id, state } = this.state
-    if (id !== _id) {
-      this.setState({
-        id: _id
-      })
-    }
-    return (
-      <div>
-        <div className='activity' key={_id}>
-          <div className='name'>
-            {name}
-          </div>
-          <div className='time'>
-            时间：{startTime} - {endTime}
-          </div>
-          <div className='location'>
-            地点：{location}
-          </div>
-          <div>
-            人数限制: {enroNum} / {limiteOfStu}
-          </div>
-          <div className='module'>
-            模块: {module}
-          </div>
-          <div>
-            报名截止：{enroDeadLine}  <button onClick={this.handleEnroll}>{state}</button>
-          </div>
-          <details className='detail'>
-            <summary>查看详情</summary>
-            <p>{detail}
-            </p>
-          </details>
-        </div>
-      </div>
-    )
-  }
-}
+const { CheckableTag } = Tag
+const tagsData = ['模块A', '模块B', '模块C', '模块D']
 
 class Activities extends Component {
   constructor () {
     super()
     this.state = {
-      list: []
+      list: [],
+      enrolled: [],
+      selectedTags: [],
+      all: true
     }
     this.getAct = this.getAct.bind(this)
+    this.handleSelect = this.handleSelect.bind(this)
+    this.handleAll = this.handleAll.bind(this)
   }
 
   componentDidMount () {
@@ -129,7 +30,8 @@ class Activities extends Component {
     axios.get(config.url.getActivities)
       .then(res => {
         this.setState({
-          list: res.data
+          list: res.data.all,
+          enrolled: res.data.enrolled
         })
       })
       .catch(err => {
@@ -144,19 +46,78 @@ class Activities extends Component {
     console.log('报名')
   }
 
-  render () {
-    const { list } = this.state
-    console.log(list)
-    return (
-      list.map((item) => {
-        return (
-          <div className='activities' key={item._id}>
-            <Activity
-              item={item}
-            />
-          </div>
-        )
+  handleSelect (tag, checked) {
+    const { selectedTags } = this.state
+    const nextSelectedTags = checked ? [...selectedTags, tag] : selectedTags.filter(t => t !== tag)
+    if (nextSelectedTags.length === 0) {
+      this.setState({
+        selectedTags: nextSelectedTags,
+        all: true
       })
+    } else {
+      this.setState({
+        selectedTags: nextSelectedTags,
+        all: false
+      })
+    }
+  }
+
+  handleAll () {
+    if (!this.state.all) {
+      this.setState({
+        selectedTags: [],
+        all: true
+      })
+    }
+  }
+
+  render () {
+    const { list, selectedTags, all } = this.state
+    return (
+      <div>
+        <CheckableTag
+          key='all'
+          checked={all}
+          onChange={this.handleAll}
+        >
+          全部
+        </CheckableTag>
+        {tagsData.map(tag => (
+          <CheckableTag
+            key={tag}
+            checked={selectedTags.indexOf(tag) > -1}
+            onChange={checked => this.handleSelect(tag, checked)}
+          >
+            {tag}
+          </CheckableTag>
+        ))}
+        {
+          all
+            ? list.map((item) => {
+              return (
+                <div className='activities' key={item._id}>
+                  <Activity
+                    item={item}
+                    state='报名'
+                  />
+                </div>
+              )
+            })
+            : list.filter(item => {
+              return selectedTags.indexOf(`模块${item.module}`) !== -1
+            }).map((item) => {
+              return (
+                <div className='activities' key={item._id}>
+                  <Activity
+                    item={item}
+                    state='报名'
+                  />
+                </div>
+              )
+            })
+        }
+      </div>
+
     )
   }
 }

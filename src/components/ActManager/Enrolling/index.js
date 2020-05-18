@@ -1,9 +1,26 @@
 import React, { Component } from 'react'
 import './index.css'
-import axios from 'axios'
 import history from '../../history'
-import config from '../../config'
+import { config, axios } from '../../config'
 import { Activity, Enrollments } from '../index'
+import { Button } from 'antd'
+
+function ManageNav (props) {
+  function handleClick () {
+    history.push(`/a/act/enrolling/manager/${props.id}`)
+    console.log(`${config.url.enrollingManager}/${props.id}`)
+  }
+  return (
+    <div className='manage-nav'>
+      <Button
+        onClick={handleClick}
+        block
+        type='primary'
+      >管理
+      </Button>
+    </div>
+  )
+}
 
 class Enrolling extends Component {
   constructor () {
@@ -15,7 +32,7 @@ class Enrolling extends Component {
   }
 
   getEnroAct () {
-    axios.get(`${config.baseURL}/activity/enrolling`)
+    axios.get(config.url.getEnrolling)
       .then(res => {
         this.setState({
           list: res.data
@@ -36,16 +53,20 @@ class Enrolling extends Component {
   render () {
     const { list } = this.state
     return (
-      list.map((item) => {
-        return (
-          <div className='activities' key={item._id}>
-            <Activity
-              item={item}
-              Component={Enrollments}
-            />
-          </div>
-        )
-      })
+      <div className='container'>
+        {
+          list.map((item) => {
+            return (
+              <div className='activities' key={item._id}>
+                <Activity
+                  Component={ManageNav}
+                  item={item}
+                />
+              </div>
+            )
+          })
+        }
+      </div>
     )
   }
 }

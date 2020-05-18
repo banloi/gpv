@@ -13,7 +13,51 @@ class Activity extends Component {
       enrollId: '',
       score: ''
     }
+    this.handleEnroll = this.handleEnroll.bind(this)
     this.trim = this.trim.bind(this)
+  }
+
+  handleEnroll () {
+    if (this.state.state === '报名') {
+      axios.post(config.url.postEnro, qs.stringify({
+        activityId: this.state.id
+      }))
+        .then(res => {
+          this.setState({
+            state: '已报名',
+            enrollId: res.data.enrollId
+          })
+          console.log(res)
+          message.success('报名成功')
+        })
+        .catch(err => {
+          if (err.Error === '已报名，无需重复报名') {
+            console.log(err.enrollId)
+            this.setState({
+              state: '已报名',
+              enrollId: err.enrollId
+            })
+          }
+          message.error(err.Error)
+        })
+    } else if (this.state.state === '已报名') {
+      axios.post(config.url.cancelEnro, qs.stringify({
+        _id: this.state.enrollId,
+        activityId: this.state.id
+      }))
+        .then(res => {
+          console.log(res)
+          this.setState({
+            state: '报名',
+            enrollId: ''
+          })
+          message.success('取消成功')
+        })
+        .catch(err => {
+          console.log(err)
+          message.error(err.Error)
+        })
+    }
   }
 
   trim (time) {
@@ -24,7 +68,6 @@ class Activity extends Component {
 
   render () {
     const { _id, name, location, limiteOfStu, enroNum, module, detail, constitutor } = this.props.item
-    const { Component } = this.props
     if (this.props.enrollId && !this.state.enrollId) {
       this.setState({
         enrollId: this.props.enrollId
@@ -70,7 +113,10 @@ class Activity extends Component {
                 <div>
                   <span className='item'>报名截止：</span><span className='value'>{enroDeadLine}</span>
                 </div>
-              </div>
+                <div className='enro-btn'>
+                  <Button onClick={this.handleEnroll}>{state}</Button>
+                </div>
+                </div>
           }
 
           <Collapse className='detail'>
@@ -79,11 +125,6 @@ class Activity extends Component {
             </Panel>
           </Collapse>
         </Card>
-        {
-          Component
-            ? <Component id={id} />
-            : null
-        }
       </div>
     )
   }

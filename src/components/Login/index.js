@@ -39,7 +39,7 @@ class Login extends React.Component {
       .then(res => {
         if (res.status === 200) {
           if (res.data.type === 'user') {
-            history.push('/u/activities')
+            history.push('/u/all')
           } else if (res.data.type === 'actAdm') {
             history.push('/a/act/new')
           } else if (res.data.type === 'userAdm') {
@@ -51,6 +51,7 @@ class Login extends React.Component {
       })
       .catch(
         e => {
+          console.log(e)
           this.setState({
             message: e.Error,
             state: 'error'
@@ -62,46 +63,51 @@ class Login extends React.Component {
   render () {
     const { message, state } = this.state
     return (
-      <Form
-        name='normal_login'
-        className='login-form'
-        initialValues={{ remember: true }}
-        onFinish={this.handleFinish}
+      <div
+        className='login-form-container'
       >
-        <Alert className='alert' message={message} type={state} />
+        <Form
+          name='normal_login'
+          className='login-form'
+          initialValues={{ remember: true }}
+          onFinish={this.handleFinish}
+        >
+          <Alert className='alert' message={message} type={state} />
 
-        <Form.Item
-          name='username'
-          rules={[{ required: true, message: '请输入用户名' }]}
-        >
-          <Input prefix={<UserOutlined className='site-form-item-icon' />} placeholder='用户名' />
-        </Form.Item>
-        <Form.Item
-          name='password'
-          rules={[{ required: true, message: '请输入密码' }]}
-        >
-          <Input
-            prefix={<LockOutlined className='site-form-item-icon' />}
-            type='password'
-            placeholder='密码'
-          />
-        </Form.Item>
-        <Form.Item>
-          <Radio.Group onChange={this.handleChange} value={this.state.userType}>
-            <Radio value='user'>普通用户</Radio>
-            <Radio value='adm'>管理员</Radio>
-          </Radio.Group>
-        </Form.Item>
-        <Form.Item>
-          <Button type='primary' htmlType='submit' className='login-form-button'>
-          登录
-          </Button>
-          <a href='http://localhost:3001/register'>注册</a>
-          <a className='login-form-forgot' href=''>
-            忘记密码
-          </a>
-        </Form.Item>
-      </Form>
+          <Form.Item
+            name='username'
+            rules={[{ required: true, message: '请输入用户名' }]}
+          >
+            <Input prefix={<UserOutlined className='site-form-item-icon' />} placeholder='用户名' />
+          </Form.Item>
+          <Form.Item
+            name='password'
+            rules={[{ required: true, message: '请输入密码' }]}
+          >
+            <Input
+              prefix={<LockOutlined className='site-form-item-icon' />}
+              type='password'
+              placeholder='密码'
+            />
+          </Form.Item>
+          <Form.Item>
+            <Radio.Group onChange={this.handleChange} value={this.state.userType}>
+              <Radio value='user'>普通用户</Radio>
+              <Radio value='adm'>管理员</Radio>
+            </Radio.Group>
+          </Form.Item>
+          <Form.Item>
+            <Button type='primary' htmlType='submit' className='login-form-button'>
+              登录
+            </Button>
+            <a href='http://localhost:3001/register'>注册</a>
+            <a className='login-form-forgot' href=''>
+              忘记密码
+            </a>
+          </Form.Item>
+        </Form>
+      </div>
+
     )
   }
 }

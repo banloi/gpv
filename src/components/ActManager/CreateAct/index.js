@@ -1,167 +1,138 @@
-import React, { Component } from 'react'
+import React, { Component, useState } from 'react'
 import './index.css'
-import axios from 'axios'
 import history from '../../history'
-import config from '../../config'
+import { config, axios } from '../../config'
 import qs from 'qs'
 
-class CreateAct extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      name: '',
-      location: '',
-      limiteOfStu: 0,
-      detail: '',
-      startTime: '',
-      endTime: '',
-      enroDeadLine: '',
-      constitutor: 'daye',
-      module: '',
-      message: ''
+import { Form, Input, InputNumber, Button, DatePicker, Radio, Alert } from 'antd'
+const { RangePicker } = DatePicker
+const { TextArea } = Input
+const layout = {
+  labelCol: {
+    span: 8
+  },
+  wrapperCol: {
+    span: 16
+  }
+}
+const configs = {
+  rules: [{ type: 'object', required: true, message: '请选择报名截止时间' }]
+}
+const rangeConfig = {
+  rules: [{ type: 'array', required: true, message: '请选择活动时间' }]
+}
+
+function CreateAct () {
+  const [module, setModule] = useState('A')
+  const [btnState, setBtnState] = useState(false)
+  const [form] = Form.useForm()
+  const [result, setResult] = useState('success')
+  const [message, setMessage] = useState('请输入活动信息')
+
+  function handleChange (e) {
+    console.log('radio checked', e.target.value)
+    setModule(e.target.value)
+  }
+
+  function handleFinish (fieldsValue) {
+    console.log(fieldsValue)
+    const rangeTimeValue = fieldsValue.actTime
+    const values = {
+      ...fieldsValue,
+      enroDeadLine: fieldsValue.enroDeadLine.format('YYYY-MM-DD HH:mm:ss'),
+      startTime: rangeTimeValue[0].format('YYYY-MM-DD HH:mm:ss'),
+      endTime: rangeTimeValue[0].format('YYYY-MM-DD HH:mm:ss')
     }
-    this.handleInput = this.handleInput.bind(this)
-    this.Submit = this.handleSubmit.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
-  }
-
-  handleInput (event) {
-    const name = event.target.name
-    this.setState({
-      [name]: event.target.value
-    })
-  }
-
-  handleFormSubmit (event) {
-    event.preventDefault()
-  }
-
-  handleSubmit () {
-    const { name, location, limiteOfStu, detail, startTime, endTime, enroDeadLine, module } = this.state
-    const data = {
-      name: name,
-      location: location,
-      limiteOfStu: limiteOfStu,
-      detail: detail,
-      startTime: startTime,
-      endTime: endTime,
-      enroDeadLine: enroDeadLine,
-      module: module
-    }
-    axios.post(`${config.baseURL}/activity`, qs.stringify(data))
+    delete values.actTime
+    axios
+      .post(config.url.postActivity, qs.stringify(values))
       .then(res => {
-        if (res.status === 200) {
-          console.log(res)
-        }
+        console.log(res)
+        setBtnState(false)
+        setMessage('创建成功')
+        setResult('success')
+        form.resetFields()
       })
-      .catch(
-        e => {
-          if (e.response.data.Error === '请先登录') {
-            history.push('/')
-          }
-          this.setState({
-            message: e.response.data.Error
-          })
-        }
-      ) // 返回 400 时，数据是 err.response
+      .catch(e => {
+        setMessage(e.Error)
+        setBtnState(false)
+        setResult('error')
+      })
+    setBtnState(true)
   }
-
-  render () {
-    const { number, password, rePassword, telephone, startTime, endTime, enroDeadLine } = this.state
-    return (
-      <div>
-        <form onSubmit={this.handleFormSubmit}>
-          <div className='field'>
-            <label>名称</label>
-            <input
-              value={number}
-              placeholder='输入活动名称'
-              type='text'
-              name='name'
-              required
-              onChange={this.handleInput}
-            />
-          </div>
-          <div className='field'>
-            <label>地点</label>
-            <input
-              value={password}
-              placeholder='输入地点'
-              type='text'
-              name='location'
-              required
-              onChange={this.handleInput}
-            />
-          </div>
-          <div className='field'>
-            <label>人数上限</label>
-            <input
-              value={rePassword}
-              placeholder='输入人数上限'
-              type='number'
-              name='limiteOfStu'
-              required
-              onChange={this.handleInput}
-            />
-          </div>
-          <div className='field'>
-            <label>报名截止时间</label>
-            <input
-              value={enroDeadLine}
-              placeholder='xxxx-xx-xxTxx:xx'
-              type='text'
-              name='enroDeadLine'
-              required
-              onChange={this.handleInput}
-            />
-          </div>
-          <div className='field'>
-            <label>开始时间</label>
-            <input
-              value={startTime}
-              placeholder='xxxx-xx-xxTxx:xx'
-              type='text'
-              name='startTime'
-              required
-              onChange={this.handleInput}
-            />
-          </div>
-          <div className='field'>
-            <label>结束时间</label>
-            <input
-              value={endTime}
-              placeholder='xxxx-xx-xxTxx:xx'
-              type='text'
-              name='endTime'
-              required
-              onChange={this.handleInput}
-            />
-          </div>
-          <div className='field'>
-            <input type='radio' value='A' name='module' id='A' onChange={this.handleInput} />
-            <label>A</label>
-            <input type='radio' value='B' name='module' id='B' onChange={this.handleInput} />
-            <label>B</label>
-            <input type='radio' value='C' name='module' id='C' onChange={this.handleInput} />
-            <label>C</label>
-            <input type='radio' value='D' name='module' id='D' onChange={this.handleInput} />
-            <label>D</label>
-          </div>
-          <div className='field'>
-            <label>详情</label>
-            <textarea
-              value={telephone}
-              type='text'
-              name='detail'
-              required
-              onChange={this.handleInput}
-            />
-          </div>
-          <input type='submit' value='提交' onClick={this.handleSubmit} />
-        </form>
-      </div>
-    )
+  const initialValues = {
+    name: '',
+    location: '',
+    actTime: ['', ''],
+    enroDeadLine: '',
+    limiteOfStu: 0,
+    module: 'A',
+    detail: ''
   }
+  return (
+    <div id='container'>
+      <Form
+        form={form}
+        {...layout}
+        onFinish={handleFinish}
+      >
+        <Alert className='alert' message={message} type={result} />
+        <Form.Item
+          label='活动名'
+          name='name'
+          rules={[{ required: true, message: '请输入活动名' }]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label='地点'
+          name='location'
+          rules={[{ required: true, message: '请输入活动地点' }]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item name='actTime' label='活动时间' {...rangeConfig}>
+          <RangePicker showTime format='YYYY-MM-DD HH:mm:ss' />
+        </Form.Item>
+        <Form.Item name='enroDeadLine' label='报名截止时间' {...configs}>
+          <DatePicker showTime format='YYYY-MM-DD HH:mm:ss' />
+        </Form.Item>
+        <Form.Item
+          label='人数上限'
+          name='limiteOfStu'
+          required
+          rules={[{ required: true, message: '请输入活动人数上限' }]}
+        >
+          <InputNumber min={1} max={9999} initialValues={1} />
+        </Form.Item>
+        <Form.Item
+          label='选择模块'
+          name='module'
+          rules={[{ required: true, message: '请选择模块' }]}
+        >
+          <Radio.Group onChange={handleChange} value={module}>
+            <Radio value='A'>模块A</Radio>
+            <Radio value='B'>模块B</Radio>
+            <Radio value='C'>模块C</Radio>
+            <Radio value='D'>模块D</Radio>
+          </Radio.Group>
+        </Form.Item>
+        <Form.Item
+          label='详情'
+          name='detail'
+          rules={[{ required: true, message: '请输入活动介绍' }]}
+        >
+          <TextArea
+            placeholder='介绍活动详情'
+            autoSize={{ minRows: 3, maxRows: 15 }}
+          />
+        </Form.Item>
+        <Button type='primary' htmlType='submit' disabled={btnState} className='login-form-button'>
+          提交
+        </Button>
+      </Form>
+    </div>
+  )
 }
 
 export default CreateAct
