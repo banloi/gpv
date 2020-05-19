@@ -10,6 +10,7 @@ import UnRated from './UnRated'
 import RateTable from './RateTable'
 import Done from './Done'
 import Manager from './Manager'
+import ScoreTable from './ScoreTable'
 
 export {
   Activity,
@@ -23,5 +24,6 @@ export {
   UnRated,
   RateTable,
   Done,
-  Manager
+  Manager,
+  ScoreTable
 }

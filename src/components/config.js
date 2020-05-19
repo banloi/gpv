@@ -22,7 +22,16 @@ const config = {
     getActivityInfo: `${baseUrl}/activity/info`, // 获取单个活动信息
     putActivityInfo: `${baseUrl}/activity/info`, // 更新活动信息
     postAdmEnro: `${baseUrl}/enrollment/adm`, // 管理员添加报名表
-    deleteAdmEnro: `${baseUrl}/enrollment/cancel`
+    deleteAdmEnro: `${baseUrl}/enrollment/cancel`, // 删除活动
+    getUnderway: `${baseUrl}/activity/underway`, // 正在进行的活动列表
+    getUnrated: `${baseUrl}/activity/unrated`,
+    putComplete: `${baseUrl}/activity/complete`,
+    getDone: `${baseUrl}/activity/Done`, // 获取完成的活动
+    getRatelist: `${baseUrl}/score/ratelist`,
+    getScore: `${baseUrl}/score/adm`, // 获取成绩
+    postScore: `${baseUrl}/score`, // 打分
+    putScore: `${baseUrl}/score` // 修改分数
+
   }
 }
 

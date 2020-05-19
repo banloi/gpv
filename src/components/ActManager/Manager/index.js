@@ -4,7 +4,7 @@ import { axios, config } from '../../config'
 import qs from 'qs'
 import { Button, Form, Input, DatePicker, InputNumber, Radio, Alert, Skeleton, Popconfirm } from 'antd'
 import moment from 'moment'
-import { Enrollments } from '../index'
+import { Enrollments, RateTable } from '../index'
 import './index.css'
 
 const { RangePicker } = DatePicker
@@ -32,6 +32,9 @@ function ActManager (props) {
   const [message, setMessage] = useState('修改活动信息')
   const [initialData, setInitaiaData] = useState({}) // 设置表单初始值
   const [initialState, setInitailState] = useState(true) // 是否挂载组件
+  const [able, setAble] = useState(true)
+
+  console.log(props)
 
   function getInfo () {
     axios.get(config.url.getActivityInfo, {
@@ -41,6 +44,11 @@ function ActManager (props) {
     }).then(res => {
       console.log(res)
       const data = res.data
+      if (new Date() > new Date(res.data.enroDeadLine)) {
+        console.log(able)
+        setAble(false)
+      }
+      console.log(able)
       setInitaiaData({
         name: data.name,
         location: data.location,
@@ -62,7 +70,11 @@ function ActManager (props) {
   }
 
   function handleModified () {
-    setBtnState(false)
+    console.log(able)
+    if (able) {
+      setBtnState(false)
+      console.log(able)
+    }
   }
 
   function handleFinish (fieldsValue) {
@@ -179,9 +191,16 @@ function ActManager (props) {
 
 function Manager (props) {
   const id = props.match.params.id
+  console.log(props)
   const [type, setType] = useState(true)
   const [switchTo, setSwitchTo] = useState('切换为报名管理')
-
+  const [location, setLocation] = useState('enrolling')
+  if (props.match.path === '/a/act/underway/manager/:id' && location !== 'underway') {
+    setLocation('underway')
+  }
+  if (props.match.path === '/a/act/unrated/manager/:id' && location !== 'unrated') {
+    setLocation('unrated')
+  }
   function handleSwitch () {
     if (type) {
       setType(false)
@@ -192,7 +211,8 @@ function Manager (props) {
     }
   }
   function handleBack () {
-    history.push('/a/act/enrolling')
+    console.log(location)
+    history.push(`/a/act/${location}`)
   }
 
   return (
@@ -203,18 +223,23 @@ function Manager (props) {
         >
           返回活动列表
         </Button>
-        <Button
-          className='left-btn'
-          onClick={handleSwitch}
-        >{`${switchTo}`}
-        </Button>
+        {
+          location !== 'unrated'
+            ? (<Button
+              className='left-btn'
+              onClick={handleSwitch}
+            >
+              {`${switchTo}`}
+            </Button>)
+            : null
+        }
       </div>
-
       {
-        type
-          ? <ActManager id={id} />
-          : <Enrollments activityId={id} />
-
+        location !== 'unrated'
+          ? type
+            ? <ActManager id={id} lication={location} />
+            : <Enrollments activityId={id} />
+          : <RateTable activityId={id} />
       }
     </div>
   )

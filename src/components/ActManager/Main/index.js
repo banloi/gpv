@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import './index.css'
 import history from '../../history'
 import { Route, Router, Link, Switch } from 'react-router-dom'
-import { CreateAct, Enrolling, Manager, Underway, UnRated, Done } from '../index'
+import { CreateAct, Enrolling, Manager, Underway, UnRated, Done, ScoreTable } from '../index'
 
 class ActManager extends Component {
   render () {
@@ -23,7 +23,7 @@ class ActManager extends Component {
               <Link to='/a/act/Unrated'>待打分</Link>
             </li>
             <li className='navigation-list-item'>
-              <Link to='/a/act/complete'>已完成</Link>
+              <Link to='/a/act/done'>已完成</Link>
             </li>
           </ul>
         </div>
@@ -36,13 +36,16 @@ class ActManager extends Component {
           <Route path='/a/act/enrolling'>
             <Enrolling />
           </Route>
+          <Route path='/a/act/underway/manager/:id' component={Manager} />
           <Route path='/a/act/underway'>
             <Underway />
           </Route>
+          <Route path='/a/act/unrated/manager/:id' component={Manager} />
           <Route path='/a/act/Unrated'>
             <UnRated />
           </Route>
-          <Route path='/a/act/complete'>
+          <Route path='/a/act/done/score/:id' component={ScoreTable} />
+          <Route path='/a/act/done'>
             <Done />
           </Route>
         </Switch>

@@ -1,278 +1,369 @@
-import React, { Component } from 'react'
+import React, { Component, useContext, useState, useEffect, useRef } from 'react'
 import './index.css'
 import axios from 'axios'
 import config from '../../config'
 import qs from 'qs'
 
-class RateTable extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      name: '',
-      number: '',
-      rated: [],
-      unRated: [],
-      message: '发布后不能再修改，请确认后发布'
+import { Table, Input, Button, Popconfirm, Form, Alert } from 'antd'
+
+const EditableContext = React.createContext();
+
+const EditableRow = ({ index, ...props }) => {
+  const [form] = Form.useForm();
+  return (
+    <Form form={form} component={false}>
+      <EditableContext.Provider value={form}>
+        <tr {...props} />
+      </EditableContext.Provider>
+    </Form>
+  );
+};
+
+const EditableCell = ({
+  title,
+  editable,
+  children,
+  dataIndex,
+  record,
+  handleSave,
+  ...restProps
+}) => {
+  const [editing, setEditing] = useState(false);
+  const inputRef = useRef();
+  const form = useContext(EditableContext);
+  useEffect(() => {
+    if (editing) {
+      inputRef.current.focus();
     }
-    this.OnRate = this.OnRate.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
-    this.handleComplete = this.handleComplete.bind(this)
+  }, [editing]);
+
+  const toggleEdit = () => {
+    setEditing(!editing);
+    form.setFieldsValue({
+      [dataIndex]: record[dataIndex],
+    });
+  };
+
+  const save = async e => {
+    let message = {
+      message: '提交'
+    }
+    if (record.rated) {
+      message = {
+        message: '确认修改'
+      }
+    }
+    const able = {
+      state: false
+    }
+    const disabled = {
+      state: true
+    }
+    try {
+      const values = await form.validateFields();
+      console.log(values)
+      console.log(record)
+      toggleEdit();
+      if (values.performance === '' || record.performance === '') {
+        handleSave({ ...record, ...values, ...disabled, ...message });
+      }
+      if (values.performance !== '' || record.performance !== '') {
+        handleSave({ ...record, ...values, ...able, ...message });
+      } else {
+        handleSave({ ...record, ...values, ...message });
+      }
+
+    } catch (errInfo) {
+      console.log('Save failed:', errInfo);
+      handleSave({ ...record, ...disabled, ...message });
+    }
+  };
+
+  let childNode = children;
+
+  if (editable) {
+    childNode = editing ? (
+      <Form.Item
+        style={{
+          margin: 0,
+        }}
+        name={dataIndex}
+        rules={[
+          {
+            required: true,
+            message: `${title} is required.`,
+          },
+        ]}
+      >
+        <Input ref={inputRef} onPressEnter={save} onBlur={save} />
+      </Form.Item>
+    ) : (
+        <div
+          className="editable-cell-value-wrap"
+          style={{
+            paddingRight: 24,
+          }}
+          onClick={toggleEdit}
+        >
+          {children}
+        </div>
+      );
   }
 
-  componentDidMount () {
-    axios.get(`${config.baseURL}/score/ratelist`, {
+  return <td {...restProps}>{childNode}</td>;
+};
+
+class RateTable extends Component {
+  constructor(props) {
+    super(props);
+    this.columns = [
+      {
+        title: '姓名',
+        dataIndex: 'name',
+        width: '15%'
+      },
+      {
+        title: '学号',
+        dataIndex: 'number',
+        width: '18%'
+      },
+      {
+        title: '表现',
+        dataIndex: 'performance',
+        editable: true,
+        width: '30%'
+      },
+      {
+        title: '得分',
+        dataIndex: 'score',
+        editable: true,
+        width: '15%'
+      },
+      {
+        title: '操作',
+        dataIndex: 'operation',
+        render: (text, record) =>
+          this.state.dataSource.length >= 1
+            ? (
+              <Button
+                onClick={() => this.handleDelete(record)}
+                disabled={record.state}>{record.message}</Button>
+            )
+            : null,
+      },
+    ];
+    this.state = {
+      dataSource: [
+        {
+          key: '0',
+          name: '你大爷',
+          number: 'A19160001',
+          performance: 'London, Park Lane no. 0',
+          score: 9,
+          state: false
+        },
+        {
+          key: '1',
+          name: '你大爷的',
+          number: 'A19160001',
+          performance: 'London, Park Lane no. 0',
+          score: 4,
+          state: false
+        },
+        {
+          key: '2',
+          name: '你大爷的',
+          number: 'A19160001',
+          performance: '',
+          score: 0,
+          state: true
+        }
+      ],
+      count: 2,
+      message: {
+        info: '添加或修改成绩',
+        type: 'success',
+        disable: false
+      }
+    };
+  }
+
+  handleDelete = (info) => {
+    if (info.rated) {
+      console.log('rated')
+      axios.put(config.url.putScore, qs.stringify({
+        scoreId: info._id,
+        performance: info.performance,
+        score: info.score
+      }))
+        .then(res => {
+        console.log(res.data)
+          const update = {
+            state: true,
+            message: '修改成功'
+          }
+          this.handleSave({ ...info, ...update })
+        }).catch(err => {
+        console.log(err)
+      })
+    } else {
+      axios.post(config.url.postScore, qs.stringify({
+        studentNumber: info.number,
+        activityId: this.props.activityId,
+        studentId: info.key,
+        performance: info.performance,
+        score: info.score
+      }))
+        .then(res => {
+          console.log(res.data.scoreId)
+          const update = {
+            _id: res.data.scoreId,
+            state: true,
+            rated: true,
+            message: '提交成功'
+          }
+          this.handleSave({ ...info, ...update })
+        })
+        .catch(err => {
+          console.log(err)
+          if (err.scoreId) {
+            console.log(err.scoreId)
+            const update = {
+              _id: err.scoreId,
+              state: true,
+              rated: true
+            }
+            this.handleSave({ ...info, ...update })
+          }
+        })
+    }
+  };
+
+  handleSave = row => {
+    console.log(row)
+    const newData = [...this.state.dataSource];
+    const index = newData.findIndex(item => row.key === item.key);
+    const item = newData[index];
+    newData.splice(index, 1, { ...item, ...row });
+    console.log(newData)
+    console.log(this.state.dataSource)
+    this.setState({
+      dataSource: newData,
+    });
+  }
+
+  handleRelease = () => {
+    console.log('fabu')
+    axios.put(config.url.putComplete, qs.stringify({
+      activityId: this.props.activityId
+    }))
+      .then(res => {
+        console.log(res)
+        const message = {
+          info: '发布成功',
+          type: 'success',
+          disable: true
+        }
+        this.setState({
+          message: message
+        })
+      })
+      .catch(e => {
+        const message = {
+          info: e.Error,
+          type: 'error'
+        }
+        this.setState({
+          message: message
+        })
+        console.log(e)
+      })
+  }
+
+  componentDidMount() {
+    axios.get(config.url.getRatelist, {
       params: {
         activityId: this.props.activityId
       }
     })
       .then(res => {
+        console.log(res.data)
+        const items = []
+        res.data.unRated.forEach(item => {
+          console.log(item)
+          const info = {}
+          const { studentInfo, ...rest } = item
+          const { _id, ..._studentInfo } = studentInfo
+          info.key = item.studentInfo._id //学生id
+          info._id = rest._id // 报名id
+          info.rated = false
+          info.performance = ''
+          info.score = 0
+          info.state = true
+          info.message = '提交'
+          items.push({ ...info, ..._studentInfo })
+        })
+        res.data.rated.forEach(item => {
+          console.log(item)
+          const info = {}
+          const { studentInfo, ...rest } = item
+          const { _id, ..._studentInfo } = studentInfo
+          info.key = item.studentInfo._id //学生id
+          info._id = rest._id // 分数id
+          info.rated = true
+          info.performance = rest.performance
+          info.score = rest.score
+          info.state = true
+          info.message = '确认修改'
+          items.push({ ...info, ..._studentInfo })
+        })
+        console.log(items)
         this.setState({
-          rated: res.data.rated,
-          unRated: res.data.unRated
+          dataSource: items
         })
       })
       .catch(e => console.log(e))
   }
 
-  // 点击打分
-  OnRate (studentNumber, studentId, enroId, performance, score) {
-    const { rated, unRated } = this.state
-    const activityId = this.props.activityId
-    // 选出其它行
-    const filter = unRated.filter((item) => {
-      return item._id !== enroId
-    })
-    // 选出操作行
-    const ratedOne = unRated.filter((item) => {
-      return item._id === enroId
-    })
-    if (!performance || !score) {
-      ratedOne[0].message = '内容不能为空'
-      this.setState({
-        unRated: [...ratedOne, ...filter]
-      })
-    } else {
-      ratedOne[0].performance = performance
-      ratedOne[0].score = score
-      ratedOne[0].message = '打分成功'
-      axios.post(
-        `${config.baseURL}/score`,
-        qs.stringify({
-          studentNumber: studentNumber,
-          studentId: studentId,
-          activityId: activityId,
-          enroId: enroId,
-          performance: performance,
-          score: score,
-          activityInfo: activityId
-        }))
-        .then(res => {
-          ratedOne[0].message = res.data.message
-        })
-      this.setState({
-        unRated: filter,
-        rated: [...ratedOne, ...rated]
-      })
-    }
-  }
+  render() {
+    const { dataSource } = this.state;
+    const components = {
+      body: {
+        row: EditableRow,
+        cell: EditableCell,
+      },
+    };
+    const columns = this.columns.map(col => {
+      if (!col.editable) {
+        return col;
+      }
 
-  // 发布成绩
-  handleComplete () {
-    axios.put(
-      `${config.baseURL}/activity/complete`,
-      qs.stringify({
-        activityId: this.props.activityId
-      })
-    )
-      .then(res => {
-        this.setState({
-          message: res.data.message
-        })
-      })
-  }
-
-  handleSubmit (event) {
-    event.preventDefault()
-  }
-
-  render () {
-    const { unRated, rated } = this.state
+      return {
+        ...col,
+        onCell: record => ({
+          record,
+          editable: col.editable,
+          dataIndex: col.dataIndex,
+          title: col.title,
+          handleSave: this.handleSave,
+        }),
+      };
+    });
     return (
-      <form onSubmit={this.handleSubmit}>
-        <h4>开始打分</h4>
-        <table>
-          <thead>
-            <tr>
-              <th>姓名</th>
-              <th>学号</th>
-              <th>评价</th>
-              <th>得分</th>
-              <th>操作</th>
-              <th>状态</th>
-            </tr>
-          </thead>
-          <tbody>
-            {unRated.length !== 0
-              ? unRated.map(
-                item => {
-                  return (
-                    <RateLine
-                      key={item._id}
-                      item={item}
-                      OnRate={this.OnRate}
-                    />
-                  )
-                }
-              )
-              : null}
-            {rated.length !== 0
-              ? rated.map(
-                item => {
-                  return (
-                    <RatedLine
-                      key={item._id}
-                      item={item}
-                      OnRate={this.OnRate}
-                    />
-                  )
-                }
-              )
-              : null}
-          </tbody>
-        </table>
-        <button
-          onClick={this.handleComplete}
-        >发布成绩
-        </button>{this.state.message}
-      </form>
-    )
-  }
-}
-
-class RateLine extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      performance: '',
-      score: undefined
-    }
-    this.handleInput = this.handleInput.bind(this)
-  }
-
-  handleInput (event) {
-    const name = event.target.name
-    this.setState({
-      [name]: event.target.value
-    })
-  }
-
-  render () {
-    const { item, OnRate } = this.props
-    const { name, number, _id } = item.studentInfo
-    const { performance, score } = this.state
-    const enroId = item._id
-    return (
-      <tr>
-        <td>{name}</td>
-        <td>{number}</td>
-        <td>
-          <input
-            type='text'
-            value={performance}
-            placeholder='输入评价'
-            className='inputEnro'
-            name='performance'
-            onChange={this.handleInput}
-            required
-          />
-        </td>
-        <td>
-          <input
-            type='number'
-            value={score}
-            placeholder='输入分数'
-            className='inputEnro'
-            name='score'
-            onChange={this.handleInput}
-            required
-          />
-        </td>
-        <td>
-          <button
-            onClick={() => { OnRate.call(this, number, _id, enroId, performance, score) }}
-          >打分
-          </button>
-        </td>
-        <td>
-          {item.message
-            ? item.message
-            : null}
-        </td>
-      </tr>
-    )
-  }
-}
-
-class RatedLine extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-      performance: '',
-      score: 0
-    }
-    this.handleInput = this.handleInput.bind(this)
-  }
-
-  handleInput (event) {
-    const name = event.target.name
-    this.setState({
-      [name]: event.target.value
-    })
-  }
-
-  componentDidMount () {
-    this.setState({
-      performance: this.props.item.performance,
-      score: this.props.item.score
-    })
-  }
-
-  render () {
-    const { item } = this.props
-    const { performance, score } = this.state
-    return (
-      <tr>
-        <td>{item.studentInfo.name}</td>
-        <td>{item.studentInfo.number}</td>
-        <td>
-          <input
-            type='text'
-            value={performance}
-            placeholder='输入评价'
-            className='inputEnro'
-            name='performance'
-            onChange={this.handleInput}
-          />
-        </td>
-        <td>
-          <input
-            type='number'
-            value={score}
-            placeholder='输入分数'
-            className='inputEnro'
-            name='score'
-            onChange={this.handleInput}
-          />
-        </td>
-        <td>
-          <button onClick={this.handleAddButton}>修改</button>
-        </td>
-        <td>{item.message
-          ? item.message
-          : null}
-        </td>
-      </tr>
-    )
+      <div className='enroForm'>
+        <Alert className='alert' message={this.state.message.info} type={this.state.message.type} />
+        <Table
+          components={components}
+          rowClassName={() => 'editable-row'}
+          bordered
+          dataSource={dataSource}
+          columns={columns}
+        />
+        <Popconfirm title='确认发布？发布后无法再修改成绩' disabled={this.state.message.disable} onConfirm={this.handleRelease}>
+          <Button danger block disabled={this.state.message.disable}>发布成绩</Button>
+        </Popconfirm>
+      </div>
+    );
   }
 }
 
