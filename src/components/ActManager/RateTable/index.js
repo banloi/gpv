@@ -91,7 +91,7 @@ const EditableCell = ({
         rules={[
           {
             required: true,
-            message: `${title} is required.`,
+            message: `请填入${title}`,
           },
         ]}
       >
@@ -131,13 +131,14 @@ class RateTable extends Component {
         title: '表现',
         dataIndex: 'performance',
         editable: true,
-        width: '30%'
+        width: '25%'
       },
       {
         title: '得分',
         dataIndex: 'score',
         editable: true,
-        width: '15%'
+        type: 'number',
+        width: '20%'
       },
       {
         title: '操作',
@@ -153,32 +154,7 @@ class RateTable extends Component {
       },
     ];
     this.state = {
-      dataSource: [
-        {
-          key: '0',
-          name: '你大爷',
-          number: 'A19160001',
-          performance: 'London, Park Lane no. 0',
-          score: 9,
-          state: false
-        },
-        {
-          key: '1',
-          name: '你大爷的',
-          number: 'A19160001',
-          performance: 'London, Park Lane no. 0',
-          score: 4,
-          state: false
-        },
-        {
-          key: '2',
-          name: '你大爷的',
-          number: 'A19160001',
-          performance: '',
-          score: 0,
-          state: true
-        }
-      ],
+      dataSource: [],
       count: 2,
       message: {
         info: '添加或修改成绩',
@@ -189,12 +165,22 @@ class RateTable extends Component {
   }
 
   handleDelete = (info) => {
+    if (isNaN(info.score)) {
+      const update = {
+        state: true,
+        message: '分数应该为数字'
+      }
+      this.handleSave({ ...info, ...update })
+      return
+    }
+    console.log(info)
     if (info.rated) {
       console.log('rated')
       axios.put(config.url.putScore, qs.stringify({
         scoreId: info._id,
         performance: info.performance,
-        score: info.score
+        score: info.score,
+        activityId: this.props.activityId,
       }))
         .then(res => {
         console.log(res.data)
@@ -281,6 +267,7 @@ class RateTable extends Component {
   }
 
   componentDidMount() {
+    console.log(this.props.module)
     axios.get(config.url.getRatelist, {
       params: {
         activityId: this.props.activityId
@@ -304,7 +291,6 @@ class RateTable extends Component {
           items.push({ ...info, ..._studentInfo })
         })
         res.data.rated.forEach(item => {
-          console.log(item)
           const info = {}
           const { studentInfo, ...rest } = item
           const { _id, ..._studentInfo } = studentInfo

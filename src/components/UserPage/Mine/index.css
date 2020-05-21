@@ -5,3 +5,11 @@
   border-radius: 20px;
   box-shadow: 0 4px 32px 0 rgba(10,14,29,.02), 0 8px 64px 0 rgba(10,14,29,.08);
 }
+
+.item{
+  font-weight: bold;
+  margin-right: 20px;
+}
+.moduleScore{
+  margin: 20px 0;
+}

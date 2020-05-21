@@ -30,8 +30,15 @@ const config = {
     getRatelist: `${baseUrl}/score/ratelist`,
     getScore: `${baseUrl}/score/adm`, // 获取成绩
     postScore: `${baseUrl}/score`, // 打分
-    putScore: `${baseUrl}/score` // 修改分数
+    putScore: `${baseUrl}/score`, // 修改分数
+    postExcel: `${baseUrl}/student/excel`,
 
+    postStudents: `${baseUrl}/student`,
+    getStudent: `${baseUrl}/student`,
+    putStudent: `${baseUrl}/student`,
+    deleteStudent: `${baseUrl}/student`,
+
+    putAdmPassword: `${baseUrl}/adm/password`
   }
 }
 

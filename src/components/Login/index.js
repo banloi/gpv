@@ -43,7 +43,7 @@ class Login extends React.Component {
           } else if (res.data.type === 'actAdm') {
             history.push('/a/act/new')
           } else if (res.data.type === 'userAdm') {
-            history.push('/a/user')
+            history.push('/a/user/all')
           }
         } else if (res.status === 400) {
           console.log(res.json)

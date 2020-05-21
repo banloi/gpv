@@ -11,6 +11,7 @@ import RateTable from './RateTable'
 import Done from './Done'
 import Manager from './Manager'
 import ScoreTable from './ScoreTable'
+import Mine from './Mine'
 
 export {
   Activity,
@@ -25,5 +26,6 @@ export {
   RateTable,
   Done,
   Manager,
-  ScoreTable
+  ScoreTable,
+  Mine
 }

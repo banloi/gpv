@@ -90,28 +90,28 @@ class Activity extends Component {
     }
     return (
       <div className='activity'>
-        <Card title={`[${module}]  ${name}`} extra={<span>{this.props.score ? `得分：${this.props.score}` : ''}</span>}>
+        <Card title={`[${module}]  ${name}`} extra={<span>{this.props.score !== undefined ? `得分：${this.props.score}` : ''}</span>}>
           <div className='time'>
-            <span className='item'>开始时间：</span><span className='value'>{startTime}</span>
+            <span className='item'>开始时间</span><span className='value'>{startTime}</span>
           </div>
           <div className='time'>
-            <span className='item'>结束时间：</span><span className='value'>{endTime}</span>
+            <span className='item'>结束时间</span><span className='value'>{endTime}</span>
           </div>
           <div className='location'>
-            <span className='item'>地点：</span><span className='value'>{location}</span>
+            <span className='item'>地点</span><span className='value'>{location}</span>
           </div>
           <div className='location'>
-            <span className='item'>主办方：</span><span className='value'>{constitutor}</span>
+            <span className='item'>主办方</span><span className='value'>{constitutor}</span>
           </div>
           {
             this.props.done
               ? null
               : <div>
                 <div>
-                  <span className='item'>名额: </span><span className='value'>{enroNum} / {limiteOfStu}</span>
+                  <span className='item'>名额</span><span className='value'>{enroNum} / {limiteOfStu}</span>
                 </div>
                 <div>
-                  <span className='item'>报名截止：</span><span className='value'>{enroDeadLine}</span>
+                  <span className='item'>报名截止</span><span className='value'>{enroDeadLine}</span>
                 </div>
                 <div className='enro-btn'>
                   <Button onClick={this.handleEnroll}>{state}</Button>

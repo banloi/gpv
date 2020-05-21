@@ -1,14 +1,11 @@
-import React, { Component, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import './index.css'
 import { config, axios } from '../../config'
 import qs from 'qs'
-import { AddEnro, CancelButton } from '../index'
 
-import { Table, Input, Button, Space, Popconfirm, Form, Alert } from 'antd'
-import Highlighter from 'react-highlight-words'
-import { SeachOutLined } from '@ant-design/icons'
+import { Table, Input, Button, Popconfirm, Form, Alert } from 'antd'
+
 import Column from 'antd/lib/table/Column'
-import { useForm } from 'antd/lib/form/util'
 const layout = {
   labelCol: {
     span: 2
@@ -194,7 +191,7 @@ function Enrollments (props) {
         <Column
           {...columns[4]}
           render={(text, record, index) => (
-            <Popconfirm title='Sure to delete?' disabled={record.state.btnDisable} onConfirm={() => handleCancel(record)}>
+            <Popconfirm title='确认删除?' disabled={record.state.btnDisable} onConfirm={() => handleCancel(record)}>
               <Button disabled={record.state.btnDisable} danger>{record.state.message}</Button>
             </Popconfirm>
           )}

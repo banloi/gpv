@@ -92,10 +92,13 @@ const Register = () => {
               required: true,
               message: '请输入学号',
               whitespace: true
+            },
+            {
+              pattern: /^A[0-9]{8}$/, message: '请输入正确的学号'
             }
           ]}
         >
-          <Input />
+          <Input maxLength={9} />
         </Form.Item>
         <Form.Item
           name='password'
@@ -104,6 +107,10 @@ const Register = () => {
             {
               required: true,
               message: '请输入密码'
+            },
+            {
+              min: 8,
+              message: '密码不能少于8个字符'
             }
           ]}
           hasFeedback
@@ -138,10 +145,14 @@ const Register = () => {
         <Form.Item
           name='telephone'
           label='手机号码'
+          maxLength={9}
           rules={[
             {
               required: true,
               message: '请输入手机号码'
+            },
+            {
+              pattern: /^1[3|4|5|7|8][0-9]\d{8}$/, message: '请输入正确的手机号'
             }
           ]}
         >

@@ -118,6 +118,7 @@ function ActManager (props) {
     <div className='enroForm'>
       <Skeleton
         loading={initialState}
+        active
       >
         <Form
           form={form}
@@ -195,6 +196,7 @@ function Manager (props) {
   const [type, setType] = useState(true)
   const [switchTo, setSwitchTo] = useState('切换为报名管理')
   const [location, setLocation] = useState('enrolling')
+  const [modules, setModules] = useState('')
   if (props.match.path === '/a/act/underway/manager/:id' && location !== 'underway') {
     setLocation('underway')
   }
@@ -214,7 +216,22 @@ function Manager (props) {
     console.log(location)
     history.push(`/a/act/${location}`)
   }
-
+  function getActivityInfo () {
+    axios.get(config.url.getActivityInfo, {
+      params: {
+        id: props.match.params.id
+      }
+    })
+      .then(res => {
+        console.log(res.data.module)
+        setModules(res.data.module)
+        console.log(modules)
+      })
+      .catch(e => {
+        console.log(e)
+      })
+  }
+  useState(getActivityInfo)
   return (
     <div id='container'>
       <div className='manager-nav'>
@@ -228,9 +245,9 @@ function Manager (props) {
             ? (<Button
               className='left-btn'
               onClick={handleSwitch}
-            >
+               >
               {`${switchTo}`}
-            </Button>)
+               </Button>)
             : null
         }
       </div>
@@ -239,7 +256,7 @@ function Manager (props) {
           ? type
             ? <ActManager id={id} lication={location} />
             : <Enrollments activityId={id} />
-          : <RateTable activityId={id} />
+          : <RateTable activityId={id} module={modules} />
       }
     </div>
   )

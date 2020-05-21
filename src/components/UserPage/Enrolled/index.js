@@ -11,13 +11,11 @@ function Enrolled () {
       .then(
         res => {
           setList(res.data)
+          console.log(res.data)
         }
       )
       .catch(err => {
         console.log(err)
-        if (err.Error === '请先登录') {
-          history.push('/')
-        }
       })
   }
 

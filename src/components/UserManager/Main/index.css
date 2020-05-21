@@ -1,0 +1,8 @@
+.um-main-page{
+  width: 70%;
+  max-width: 720px;
+  margin: auto;
+}
+.shadow {
+  box-shadow: 0 4px 32px 0 rgba(10,14,29,.02), 0 8px 64px 0 rgba(10,14,29,.08);
+}

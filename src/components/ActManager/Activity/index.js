@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
-import qs from 'qs'
-import { config, axios } from '../../config'
-import { message, Card, Collapse, Button } from 'antd'
+import { Card, Collapse } from 'antd'
 const { Panel } = Collapse
 
 class Activity extends Component {
@@ -9,7 +7,7 @@ class Activity extends Component {
     super(props)
     this.state = {
       id: '', // 活动Id
-      state: this.props.state,
+      state: '',
       enrollId: '',
       score: ''
     }
@@ -24,6 +22,7 @@ class Activity extends Component {
 
   render () {
     const { _id, name, location, limiteOfStu, enroNum, module, detail, constitutor } = this.props.item
+    console.log(enroNum)
     const { Component } = this.props
     if (this.props.enrollId && !this.state.enrollId) {
       this.setState({
@@ -70,7 +69,7 @@ class Activity extends Component {
                 <div>
                   <span className='item'>报名截止：</span><span className='value'>{enroDeadLine}</span>
                 </div>
-              </div>
+                </div>
           }
 
           <Collapse className='detail'>

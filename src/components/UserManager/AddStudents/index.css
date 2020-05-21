@@ -1,0 +1,9 @@
+.add-container{
+  overflow: hidden;
+}
+.right{
+  float: right;
+}
+.left{
+  display: inline-block;
+}

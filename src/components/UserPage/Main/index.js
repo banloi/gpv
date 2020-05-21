@@ -5,7 +5,7 @@ import history from '../../history'
 import './index.css'
 
 import { Menu } from 'antd'
-import { MailOutlined, AppstoreOutlined, SettingOutlined } from '@ant-design/icons'
+import { MailOutlined, CarryOutOutlined, CalendarOutlined, HomeOutlined, UserOutlined } from '@ant-design/icons'
 
 const { SubMenu } = Menu
 
@@ -26,16 +26,16 @@ class Main extends Component {
       <div className='main-page'>
         <Router history={history}>
           <Menu onClick={this.handleClick} selectedKeys={[this.state.current]} mode="horizontal">
-            <Menu.Item key='all' icon={<MailOutlined />}>
+            <Menu.Item key='all' icon={<HomeOutlined />}>
               <Link to='/u/all'>全部</Link>
             </Menu.Item>
-            <Menu.Item key='enrolled' icon={<MailOutlined />}>
+            <Menu.Item key='enrolled' icon={<CalendarOutlined />}>
               <Link to='/u/enrolled'>已报名</Link>
             </Menu.Item>
-            <Menu.Item key='rated' icon={<MailOutlined />}>
+            <Menu.Item key='rated' icon={<CarryOutOutlined />}>
               <Link to='/u/rated'>已打分</Link>
             </Menu.Item>
-            <Menu.Item key='mine' icon={<MailOutlined />}>
+            <Menu.Item key='mine' icon={<UserOutlined />}>
               <Link to='/u/mine'>我的</Link>
             </Menu.Item>
           </Menu>
@@ -55,34 +55,6 @@ class Main extends Component {
           </Switch>
         </Router>
       </div>
-    )
-  }
-}
-
-class Mains extends Component {
-  render() {
-    return (
-      <Router history={history}>
-        <div className='navigation'>
-          <ul className='navigation-list'>
-            <li className='navigation-list-item'>
-              <Link to='/u/activities'>活动</Link>
-            </li>
-            <li className='navigation-list-item'>
-              <Link to='/u/user'>用户</Link>
-            </li>
-          </ul>
-        </div>
-
-        <Switch>
-          <Route exact path='/u/activities'>
-            <Activities />
-          </Route>
-          <Route path='/u/user'>
-            <User />
-          </Route>
-        </Switch>
-      </Router>
     )
   }
 }
