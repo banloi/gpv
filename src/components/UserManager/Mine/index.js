@@ -27,7 +27,6 @@ function Mine () {
   const [message, setMessage] = useState('修改密码')
   const [result, setResult] = useState('success')
   const [btnState, setBtnState] = useState(false)
-  const [form] = Form.useForm()
   function handleLogout () {
     window.localStorage.removeItem('luffy_jwt_token')
     history.replace('/')
